@@ -1,12 +1,280 @@
-import paramiko
-import re
+<?php
+/**
+ * @author  WpWax
+ * @since   1.7.05
+ * @version 1.0
+ */
 
-HOST = '50.6.43.189'
-USERNAME = 'pkqczdte'
-KEY_FILE = 'E:/osama/id_rsa'
-KEY_PASSWORD = '$wt%I&n!rwme'
+use Elementor\Plugin;
 
-MAP_CODE = '''
+function dlist_setup() {
+
+	require_once get_template_directory() . '/inc/customizer.php';
+	require_once get_template_directory() . '/inc/comment_form.php';
+	require_once get_template_directory() . '/inc/dlist-helper.php';
+
+	if ( did_action('directorist_loaded') ) {
+		require_once get_template_directory() . '/inc/migration.php';
+		require_once get_template_directory() . '/migration/class-migration-v8.php';
+		require_once get_template_directory() . '/inc/directorist-support.php';
+		require_once get_template_directory() . '/inc/directorist-notice.php';
+		require_once get_template_directory() . '/updater/theme-updater-admin.php';
+		require_once get_template_directory() . '/inc/updater-config.php';
+	}
+
+	require_once get_template_directory() . '/lib/tgm/plugin_ac.php';
+
+	load_theme_textdomain( 'dlist', get_theme_file_path( '/languages' ) );
+
+	add_image_size( 'dlist_blog', 730, 413, true );
+	add_image_size( 'dlist_blog_grid', 350, 300, true );
+	add_image_size( 'dlist_related_blog', 223, 136, true );
+
+	add_theme_support( 'automatic-feed-links' );
+	add_theme_support( 'title-tag' );
+	add_theme_support( 'post-thumbnails' );
+	add_theme_support( 'woocommerce' );
+	add_theme_support( 'wc-product-gallery-lightbox' );
+	add_theme_support( 'wc-product-gallery-zoom' );
+	add_theme_support( 'wc-product-gallery-slider' );
+	add_theme_support( 'editor-styles' );
+	add_editor_style( 'style-editor.css' );
+	remove_theme_support( 'widgets-block-editor' );
+
+	register_nav_menus(
+		array(
+			'primary' => esc_html__( 'Primary Menu', 'dlist' ),
+		)
+	);
+
+	add_theme_support(
+		'html5',
+		array(
+			'search-form',
+			'comment-form',
+			'comment-list',
+			'gallery',
+			'caption',
+		)
+	);
+
+	add_theme_support(
+		'custom-background',
+		apply_filters(
+			'dlist_custom_background_args',
+			array(
+				'default-color' => 'fff',
+				'default-image' => '',
+			)
+		)
+	);
+
+	add_theme_support( 'customize-selective-refresh-widgets' );
+
+	add_theme_support(
+		'custom-logo',
+		array(
+			'height'      => 40,
+			'width'       => 120,
+			'flex-width'  => true,
+			'flex-height' => true,
+		)
+	);
+}
+
+add_action( 'after_setup_theme', 'dlist_setup' );
+
+if ( ! function_exists( 'dlist_content_width' ) ) {
+	function dlist_content_width() {
+		$GLOBALS['content_width'] = apply_filters( 'dlist_content_width', 640 );
+	}
+
+	add_action( 'after_setup_theme', 'dlist_content_width', 0 );
+}
+
+/**
+ * Register widget area.
+ */
+
+function dlist_sidebar_register() {
+
+	register_sidebar(
+		array(
+			'name'          => esc_html__( 'All Listing Widgets ', 'dlist' ),
+			'id'            => 'all_listing',
+			'description'   => esc_html__( 'It will display on the left side of the All Listing element.', 'dlist' ),
+			'before_widget' => '<div class="widget atbd_widget %2$s">',
+			'after_widget'  => '</div>',
+			'before_title'  => '<div class="widget-header atbd_widget_title"><h6 class="widget-title">',
+			'after_title'   => '</h6></div>',
+		)
+	);
+
+	if( class_exists( 'WooCommerce' ) ){
+		register_sidebar(
+			array(
+				'name'          => esc_html__( 'Shop Page Widgets', 'dlist' ),
+				'id'            => 'shop_sidebar',
+				'description'   => esc_html__( 'Appears in the shop page sidebar.', 'dlist' ),
+				'before_widget' => '<div class="widget widget-wrapper %2$s"><div class="widget-default">',
+				'after_widget'  => '</div></div>',
+				'before_title'  => '<div class="widget-header"><h6 class="widget-title">',
+				'after_title'   => '</h6> </div>',
+			)
+		);
+	}
+
+	register_sidebar(
+		array(
+			'name'          => esc_html__( 'Blog Widgets', 'dlist' ),
+			'id'            => 'blog_sidebar',
+			'description'   => esc_html__( 'Appears in the blog page sidebar.', 'dlist' ),
+			'before_widget' => '<div class="widget widget-wrapper %2$s"><div class="widget-default">',
+			'after_widget'  => '</div></div>',
+			'before_title'  => '<div class="widget-header"><h6 class="widget-title">',
+			'after_title'   => '</h6> </div>',
+		)
+	);
+
+	register_sidebar(
+		array(
+			'name'          => esc_html__( 'Page Widgets', 'dlist' ),
+			'id'            => 'page_sidebar',
+			'description'   => esc_html__( 'Appears in the page sidebar.', 'dlist' ),
+			'before_widget' => '<div class="widget widget-wrapper %2$s"><div class="widget-default">',
+			'after_widget'  => '</div></div>',
+			'before_title'  => '<div class="widget-header"><h6 class="widget-title">',
+			'after_title'   => '</h6></div>',
+		)
+	);
+
+	$footer_widget_titles = array(
+		'1' => esc_html__( 'Footer 1', 'dlist' ),
+		'2' => esc_html__( 'Footer 2', 'dlist' ),
+		'3' => esc_html__( 'Footer 3', 'dlist' ),
+		'4' => esc_html__( 'Footer 4', 'dlist' ),
+	);
+
+	foreach ( $footer_widget_titles as $id => $name ) {
+		register_sidebar(
+			array(
+				'name'          => $name,
+				'id'            => 'footer_sidebar_' . $id,
+				'before_widget' => '<div class="widget %2$s">',
+				'after_widget'  => '</div>',
+				'before_title'  => '<h2 class="widget-title">',
+				'after_title'   => '</h2>',
+			)
+		);
+	}
+}
+
+add_action( 'widgets_init', 'dlist_sidebar_register' );
+
+/*
+=====================================================
+Register custom fonts.
+====================================================== = */
+function dlist_fonts_url() {
+	$fonts_url = '';
+	$fonts     = array();
+	$subsets   = 'arabic';
+
+	if ( 'off' !== _x( 'on', 'DM Sans font: on or off', 'dlist' ) ) {
+		$fonts[] = 'DM+Sans:400,500,700';
+	}
+
+	if ( $fonts ) {
+		$fonts_url = add_query_arg(
+			array(
+				'family' => implode( '|', $fonts ),
+				'subset' => $subsets,
+			),
+			'https://fonts.googleapis.com/css'
+		);
+	}
+	
+	return esc_url_raw( $fonts_url );
+}
+
+/**
+ * Enqueue scripts and styles.
+ */
+function dlist_scripts() {
+	
+	wp_enqueue_style( 'dlist-fonts', dlist_fonts_url(), array(), null );
+	wp_enqueue_style( 'dlist-gutenberg', get_theme_file_uri( 'assets/css/gutenberg.css' ) );
+	wp_enqueue_style( 'magnific-popup', get_theme_file_uri( 'vendor_assets/css/magnific-popup.css' ), array(), null );
+	wp_enqueue_style( 'owl-carousel', get_theme_file_uri( 'vendor_assets/css/owl.carousel.min.css' ), array(), null );
+	
+	if ( is_rtl() ) {
+		wp_enqueue_style( 'elementor-rtl', get_theme_file_uri( 'assets/css/elementor-rtl.css' ) );
+		wp_enqueue_style( 'directorist-rtl', get_theme_file_uri( 'assets/css/directorist-rtl.css' ) );
+		wp_enqueue_style( 'bootstrap-rtl', get_theme_file_uri( 'vendor_assets/css/bootstrap/bootstrap-rtl.css' ), array(), null );
+		wp_enqueue_style( 'dlist-rtl-style', get_theme_file_uri( 'assets/css/theme-style-rtl.css' ), array(), null );
+		wp_enqueue_style( 'dlist-responsive-rtl', get_theme_file_uri( 'assets/css/theme-responsive-rtl.css' ), array(), null );
+	} else {
+		//Helpgent
+		if( class_exists( 'HelpGent' ) ){
+			wp_enqueue_style( 'dlist-helpgent', get_theme_file_uri( 'assets/css/helpgent.css' ) );
+		}
+		wp_enqueue_style( 'dlist-elementor', get_theme_file_uri( 'assets/css/elementor.css' ) );
+		wp_enqueue_style( 'dlist-directorist', get_theme_file_uri( 'assets/css/directorist.css' ) );
+		wp_enqueue_style( 'bootstrap', get_theme_file_uri( 'vendor_assets/css/bootstrap/bootstrap.css' ), array(), null );
+		wp_enqueue_style( 'dlist-style', get_theme_file_uri( 'assets/css/style.css' ), array(), null );
+		wp_enqueue_style( 'dlist-responsive', get_theme_file_uri( 'assets/css/responsive.css' ), array(), null );
+	}
+
+	//Custom color selection.
+	dlist_dynamic_style();
+
+	wp_enqueue_script( 'bootstrap_popper', get_theme_file_uri( 'vendor_assets/js/bootstrap/popper.js' ), array( 'jquery' ), null, false );
+	wp_enqueue_script( 'bootstrap', get_theme_file_uri( 'vendor_assets/js/bootstrap/bootstrap.min.js' ), array( 'jquery', 'bootstrap_popper' ), null, false );
+	wp_enqueue_script( 'jquery-ui-core', array( 'jquery' ) );
+	wp_enqueue_script( 'waypoints', get_theme_file_uri( 'vendor_assets/js/jquery.waypoints.min.js' ), array( 'jquery' ), null, true );
+	wp_enqueue_script( 'counterup', get_theme_file_uri( 'vendor_assets/js/jquery.counterup.min.js' ), array( 'jquery' ), null, true );
+	wp_enqueue_script( 'magnific-popup', get_theme_file_uri( 'vendor_assets/js/jquery.magnific-popup.min.js' ), array( 'jquery' ), null, true );
+	wp_enqueue_script( 'carousel', get_theme_file_uri( 'vendor_assets/js/owl.carousel.min.js' ), array( 'jquery' ), null, true );
+	wp_enqueue_script( 'headroom', get_theme_file_uri( 'vendor_assets/js/headroom.min.js' ), array( 'jquery' ), null, true );
+	wp_enqueue_script( 'dlist-main', get_theme_file_uri( 'theme_assets/js/main.js' ), array( 'jquery' ), null, true );
+
+	
+
+	$data = array(
+		'rtl'     => is_rtl() ? 'true' : 'false',
+		'ajaxurl' => admin_url( 'admin-ajax.php' ),
+	);
+
+	wp_localize_script( 'dlist-main', 'dlist_rtl', $data );
+
+	if ( did_action( 'elementor/loaded' ) && Plugin::$instance->preview->is_preview_mode() ) {
+		// JS scripts
+		wp_enqueue_script( 'waypoints' );
+		wp_enqueue_script( 'magnific-popup' );
+		wp_enqueue_script( 'counterup' );
+		wp_enqueue_script( 'carousel' );
+	}
+	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
+		wp_enqueue_script( 'comment-reply' );
+	}
+}
+
+add_action( 'wp_enqueue_scripts', 'dlist_scripts', 15 );
+
+/*
+=================================================
+ Admin Enqueue scripts and styles.
+=================================================*/
+function dlist_admin_css() {
+	wp_enqueue_style( 'dlist-admin-css', get_theme_file_uri( 'theme_assets/admin.css' ), array(), null );
+	wp_enqueue_script( 'dlist-listing-image', get_theme_file_uri( 'theme_assets/listing-image.js' ), array( 'jquery' ), null, false );
+}
+
+add_action( 'admin_enqueue_scripts', 'dlist_admin_css' );
+
+// Removing the 'directorist-inline-style' to prevent CSS conflict
+// add_filter( 'directorist_load_inline_style', '__return_false' );
+
 // ----------- تصميم الماب - Google Style Filters -----------
 add_action('wp_head', 'aegad_map_fullwidth_design', 99999);
 function aegad_map_fullwidth_design() {
@@ -71,87 +339,42 @@ function aegad_map_fullwidth_design() {
         pointer-events: none !important;
     }
 
-    /* ========== 5. إصلاح Best Things to Do Section ========== */
-    /* Override the 80vh height constraint */
-    html body .elementor-element-7fd6f4bb,
-    html body section.elementor-element-36380079 {
-        min-height: auto !important;
+    /* Best Things section فقط - مش الماب */
+    .directorist-archive-contents[data-atts*="grid"] .listing-with-sidebar__contents,
+    .directorist-archive-contents[data-atts*="grid"] .listing-with-sidebar__listing {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .directorist-archive-contents[data-atts*="grid"] .listing-with-sidebar__wrapper,
+    .directorist-archive-contents[data-atts*="grid"] .listing-with-sidebar {
+        display: block !important;
+    }
+
+    /* 5. إصلاح عرض الكروت في Best Things فقط */
+    .directorist-archive-contents[data-atts*="grid"]:not([data-atts*="map"]) {
+        height: auto !important;
+        overflow: visible !important;
+        position: relative !important;
+    }
+
+    .directorist-archive-contents[data-atts*="grid"]:not([data-atts*="map"]) .directorist-archive-items {
+        position: relative !important;
         height: auto !important;
         overflow: visible !important;
     }
 
-    html body .elementor-element-7fd6f4bb .listing-with-sidebar,
-    html body section.elementor-element-36380079 .listing-with-sidebar {
-        height: auto !important;
-        overflow: visible !important;
+    /* 4. إخفاء Explore Hot Locations وكل اللي تحته */
+    .elementor-element-1fcb1c0,
+    .elementor-element-1fcb1c0 ~ section,
+    .elementor-element-1fcb1c0 ~ .elementor-section {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        overflow: hidden !important;
     }
 
-    html body .elementor-element-7fd6f4bb .listing-with-sidebar__listing,
-    html body section.elementor-element-36380079 .listing-with-sidebar__listing {
-        position: static !important;
-        height: auto !important;
-        overflow: visible !important;
-    }
-
-    html body .elementor-element-7fd6f4bb .listing-with-sidebar__wrapper,
-    html body section.elementor-element-36380079 .listing-with-sidebar__wrapper {
-        height: auto !important;
-        overflow: visible !important;
-    }
-
-    /* Grid layout for cards */
-    html body .elementor-element-7fd6f4bb .directorist-archive-items,
-    html body section.elementor-element-36380079 .directorist-archive-items {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        gap: 20px !important;
-        justify-content: center !important;
-    }
-
-    html body .elementor-element-7fd6f4bb .directorist-listing-card,
-    html body section.elementor-element-36380079 .directorist-listing-card {
-        width: calc(33.333% - 14px) !important;
-        max-width: 380px !important;
-        flex-shrink: 0 !important;
-    }
-
-    @media (max-width: 992px) {
-        html body .elementor-element-7fd6f4bb .directorist-listing-card,
-        html body section.elementor-element-36380079 .directorist-listing-card {
-            width: calc(50% - 10px) !important;
-        }
-    }
-
-    @media (max-width: 576px) {
-        html body .elementor-element-7fd6f4bb .directorist-listing-card,
-        html body section.elementor-element-36380079 .directorist-listing-card {
-            width: 100% !important;
-        }
-    }
-
-    /* 6. New Cards Container */
-    #aegad-cards-container {
-        display: grid !important;
-        grid-template-columns: repeat(3, 1fr) !important;
-        gap: 25px !important;
-        padding: 30px 20px !important;
-        max-width: 1200px !important;
-        margin: 0 auto !important;
-    }
-
-    @media (max-width: 992px) {
-        #aegad-cards-container {
-            grid-template-columns: repeat(2, 1fr) !important;
-        }
-    }
-
-    @media (max-width: 576px) {
-        #aegad-cards-container {
-            grid-template-columns: 1fr !important;
-        }
-    }
-
-    /* ========== 7. شريط البحث Google Style ========== */
+    /* ========== 4. شريط البحث Google Style ========== */
     #aegad-google-filters {
         position: absolute !important;
         top: 15px !important;
@@ -454,70 +677,10 @@ function aegad_map_fullwidth_design() {
             });
         }
 
-        // إعادة بناء Best Things Section بالكامل
-        function rebuildBestThingsSection() {
-            if (document.getElementById('aegad-best-things-rebuilt')) return;
-
-            var section = document.querySelector('.elementor-element-7fd6f4bb');
-            if (!section) return;
-
-            // جمع بيانات الكروت قبل الحذف
-            var cards = section.querySelectorAll('.directorist-listing-card');
-            if (cards.length === 0) return;
-
-            var cardsHTML = [];
-            cards.forEach(function(card) {
-                cardsHTML.push(card.outerHTML);
-            });
-
-            // إنشاء السكشن الجديد
-            var newSection = document.createElement('div');
-            newSection.id = 'aegad-best-things-rebuilt';
-            newSection.innerHTML = `
-                <div style="text-align: center; padding: 40px 20px 20px;">
-                    <h2 style="font-size: 32px; font-weight: 700; color: #1a1a2e; margin-bottom: 10px;">Best Things to Do in the City</h2>
-                    <p style="color: #666; font-size: 16px;">Explore the popular listings around the world</p>
-                </div>
-                <div id="aegad-cards-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; padding: 20px; max-width: 1200px; margin: 0 auto;">
-                    ${cardsHTML.join('')}
-                </div>
-                <div style="text-align: center; padding: 30px 0 50px;">
-                    <a href="/all-listings/" style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; padding: 16px 50px; border-radius: 50px; font-size: 17px; font-weight: 600; text-decoration: none; box-shadow: 0 4px 15px rgba(102,126,234,0.4); text-transform: uppercase; letter-spacing: 1px;">Explore All →</a>
-                </div>
-            `;
-
-            // استبدال السكشن القديم
-            var parent = section.closest('.elementor-top-section') || section.parentElement;
-            if (parent) {
-                parent.style.cssText = 'height: auto !important; min-height: auto !important; overflow: visible !important;';
-                parent.innerHTML = '';
-                parent.appendChild(newSection);
-            }
-
-            // إضافة responsive styles
-            var style = document.createElement('style');
-            style.textContent = `
-                @media (max-width: 992px) {
-                    #aegad-cards-grid { grid-template-columns: repeat(2, 1fr) !important; }
-                }
-                @media (max-width: 576px) {
-                    #aegad-cards-grid { grid-template-columns: 1fr !important; }
-                }
-                #aegad-cards-grid .directorist-listing-card {
-                    width: 100% !important;
-                    max-width: 100% !important;
-                    height: auto !important;
-                }
-            `;
-            document.head.appendChild(style);
-
-            console.log('AEGAD: Best Things section rebuilt with', cardsHTML.length, 'cards');
-        }
-
         function init() {
             hideOldFilters();
             createGoogleFilters();
-            rebuildBestThingsSection();
+            addExploreAllButton();
         }
 
         if (document.readyState === 'loading') {
@@ -527,56 +690,7 @@ function aegad_map_fullwidth_design() {
         }
         setTimeout(init, 500);
         setTimeout(init, 1500);
-        setTimeout(rebuildBestThingsSection, 2000);
     })();
     </script>
     <?php
 }
-'''
-
-def main():
-    print("="*60)
-    print("Map - Google Style Filters")
-    print("="*60)
-
-    try:
-        key = paramiko.RSAKey.from_private_key_file(KEY_FILE, password=KEY_PASSWORD)
-        client = paramiko.SSHClient()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        client.connect(hostname=HOST, username=USERNAME, pkey=key, timeout=15, allow_agent=False, look_for_keys=False)
-        sftp = client.open_sftp()
-        print("[OK] Connected!")
-
-        functions_path = 'public_html/wp-content/themes/dlist/functions.php'
-
-        with sftp.file(functions_path, 'r') as f:
-            content = f.read().decode('utf-8')
-
-        print(f"Original: {len(content)}")
-
-        pattern = r"\n// [-]+ تصميم الماب[^\n]*\nadd_action\('wp_head', 'aegad_map_fullwidth_design'[^\n]*\nfunction aegad_map_fullwidth_design\(\) \{.*?\n\}\n?"
-        content = re.sub(pattern, '\n', content, flags=re.DOTALL)
-
-        if content.strip().endswith('?>'):
-            content = content.rstrip()[:-2].rstrip() + '\n' + MAP_CODE + '\n?>'
-        else:
-            content = content.rstrip() + '\n' + MAP_CODE
-
-        print(f"Final: {len(content)}")
-
-        with sftp.file(functions_path, 'w') as f:
-            f.write(content.encode('utf-8'))
-
-        print("[OK] Updated!")
-        print("\nGoogle-style filters:")
-        print("- Search box on left")
-        print("- Filter buttons: Restaurants, Hotels, Things to do, etc.")
-
-        sftp.close()
-        client.close()
-
-    except Exception as e:
-        print(f"[ERROR] {e}")
-
-if __name__ == "__main__":
-    main()
