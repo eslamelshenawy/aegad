@@ -15,3 +15,182 @@ License URI:    http://www.gnu.org/licenses/gpl-2.0.html
 
 
 /* You can add custom css after this line */
+
+/* ========== تحسين ظهور اللوجو في الـ Navbar - ألوان جديدة ========== */
+
+/* خلفية متدرجة حلوة للـ navbar - من الأخضر المائل للأزرق */
+.menu-area,
+.top-menu-area,
+.menu-fullwidth {
+    background: linear-gradient(135deg, #0f766e 0%, #14b8a6 50%, #06b6d4 100%) !important;
+    box-shadow: 0 4px 20px rgba(15, 118, 110, 0.3) !important;
+}
+
+/* تأكد من تطبيق الخلفية على كل الـ navbar */
+.menu-area.menu1 {
+    background: linear-gradient(135deg, #0f766e 0%, #14b8a6 50%, #06b6d4 100%) !important;
+}
+
+.menu-area.menu--dark {
+    background: linear-gradient(135deg, #0f766e 0%, #14b8a6 50%, #06b6d4 100%) !important;
+}
+
+/* تحسين ظهور اللوجو - خلفية بيضاء مع ظل */
+.site-logo,
+.site-logo a,
+.site-branding,
+.site-identity {
+    background: rgba(255, 255, 255, 0.95) !important;
+    padding: 10px 20px !important;
+    border-radius: 14px !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15) !important;
+    transition: all 0.3s ease !important;
+    display: inline-block !important;
+    margin: 8px 0 !important;
+}
+
+.site-logo:hover,
+.site-logo a:hover {
+    transform: translateY(-3px) scale(1.02) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25) !important;
+    background: rgba(255, 255, 255, 1) !important;
+}
+
+/* تحسين اللوجو نفسه */
+.site-logo img,
+.custom-logo {
+    max-height: 55px !important;
+    width: auto !important;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.1)) !important;
+    transition: all 0.3s ease !important;
+}
+
+.site-logo:hover img {
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.2)) !important;
+}
+
+/* تحسين روابط القائمة - نص أبيض مع hover ذهبي */
+.navbar-nav .nav-link,
+.navbar-nav a,
+.mainmenu__menu .navbar-nav a,
+.menu-container a {
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    padding: 8px 16px !important;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav a:hover,
+.mainmenu__menu .navbar-nav a:hover {
+    color: #fde047 !important;
+    text-shadow: 0 2px 8px rgba(253, 224, 71, 0.6) !important;
+    transform: translateY(-2px) !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 8px !important;
+}
+
+/* تحسين الأزرار في الـ header - لون ذهبي جذاب */
+.menu-area .btn-primary,
+.author-area .btn-primary,
+.menu-right .btn {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%) !important;
+    color: #0f766e !important;
+    font-weight: 700 !important;
+    border: none !important;
+    padding: 10px 24px !important;
+    border-radius: 10px !important;
+    box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4) !important;
+    transition: all 0.3s ease !important;
+}
+
+.menu-area .btn-primary:hover,
+.author-area .btn-primary:hover {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+    transform: translateY(-3px) scale(1.05) !important;
+    box-shadow: 0 6px 20px rgba(251, 191, 36, 0.6) !important;
+    color: #ffffff !important;
+}
+
+/* تحسين الـ sticky/fixed navbar */
+.menu-area-sticky,
+.menu-area.fixed-top,
+.headroom {
+    background: linear-gradient(135deg, #0f766e 0%, #14b8a6 50%, #06b6d4 100%) !important;
+    box-shadow: 0 8px 30px rgba(15, 118, 110, 0.4) !important;
+    transition: all 0.3s ease !important;
+}
+
+/* أيقونات المستخدم */
+.author-info,
+.author__access_area {
+    filter: brightness(1.1) !important;
+}
+
+/* القائمة المنسدلة (dropdown) */
+.dropdown-menu,
+.sub-menu,
+.navbar-nav .dropdown-menu {
+    background: linear-gradient(135deg, #0f766e, #14b8a6) !important;
+    border: 2px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(10px) !important;
+    padding: 8px !important;
+}
+
+.dropdown-menu a,
+.sub-menu a {
+    color: #ffffff !important;
+    padding: 12px 18px !important;
+    border-radius: 10px !important;
+    transition: all 0.2s ease !important;
+    margin: 4px 0 !important;
+}
+
+.dropdown-menu a:hover,
+.sub-menu a:hover {
+    background: rgba(253, 224, 71, 0.25) !important;
+    color: #fde047 !important;
+    transform: translateX(8px) !important;
+}
+
+/* Mobile menu improvements */
+@media (max-width: 991px) {
+    .site-logo,
+    .site-logo a {
+        padding: 8px 14px !important;
+        border-radius: 12px !important;
+        margin: 6px 0 !important;
+    }
+
+    .site-logo img {
+        max-height: 45px !important;
+    }
+
+    .menu-area .btn-primary {
+        padding: 8px 18px !important;
+        font-size: 14px !important;
+    }
+
+    .collapse.navbar-collapse {
+        background: linear-gradient(135deg, #0f766e, #14b8a6) !important;
+        padding: 20px !important;
+        border-radius: 14px !important;
+        margin-top: 10px !important;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
+    }
+}
+
+/* Ensure text contrast */
+.menu-area * {
+    color: inherit !important;
+}
+
+.navbar-nav .nav-link,
+.navbar-nav a {
+    color: #ffffff !important;
+}
+
+/* ========== نهاية تحسينات الـ Navbar ========== */

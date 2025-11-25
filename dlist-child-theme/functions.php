@@ -3,6 +3,137 @@
  * Dlist Child Theme Functions
  */
 
+// ----------- تحميل CSS الخاص بالـ Child Theme -----------
+add_action('wp_enqueue_scripts', 'aegad_child_theme_styles', 999);
+function aegad_child_theme_styles() {
+    wp_enqueue_style('dlist-child-style', get_stylesheet_uri(), array(), filemtime(get_stylesheet_directory() . '/style.css'));
+}
+
+// ----------- إضافة CSS مباشرة للـ Navbar -----------
+add_action('wp_head', 'aegad_navbar_custom_css', 999);
+function aegad_navbar_custom_css() {
+    ?>
+    <style type="text/css">
+    /* Aegad Navbar - تصميم مميز بألوان قوية */
+
+    /* خلفية Navbar - تدرج أزرق ملكي إلى بنفسجي */
+    .menu-area,
+    .top-menu-area,
+    .menu-fullwidth {
+        background: linear-gradient(135deg, #1e40af 0%, #7c3aed 50%, #db2777 100%) !important;
+        box-shadow: 0 6px 30px rgba(124, 58, 237, 0.5) !important;
+        position: relative !important;
+    }
+
+    /* تأثير لمعة خفيفة على الـ navbar */
+    .menu-area::before {
+        content: '' !important;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: 2px !important;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent) !important;
+    }
+
+    .menu-area.menu1,
+    .menu-area.menu--dark,
+    .menu-area.menu--light {
+        background: linear-gradient(135deg, #1e40af 0%, #7c3aed 50%, #db2777 100%) !important;
+    }
+
+    /* اللوجو - تحسين بسيط بدون تغيير الشكل الأساسي */
+    .site-logo img,
+    .custom-logo {
+        filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.2)) !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .site-logo:hover img,
+    .custom-logo:hover {
+        filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3)) !important;
+        transform: scale(1.03) !important;
+    }
+
+    /* روابط القائمة - بيضاء مع تأثيرات قوية */
+    .navbar-nav .nav-link,
+    .navbar-nav a,
+    .mainmenu__menu .navbar-nav a {
+        color: #ffffff !important;
+        font-weight: 700 !important;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        padding: 10px 18px !important;
+        position: relative !important;
+    }
+
+    /* خط تحت الروابط عند الـ hover */
+    .navbar-nav .nav-link::after,
+    .navbar-nav a::after {
+        content: '' !important;
+        position: absolute !important;
+        bottom: 5px !important;
+        left: 18px !important;
+        right: 18px !important;
+        height: 3px !important;
+        background: linear-gradient(90deg, #fbbf24, #f59e0b) !important;
+        transform: scaleX(0) !important;
+        transition: transform 0.3s ease !important;
+        border-radius: 2px !important;
+    }
+
+    .navbar-nav .nav-link:hover,
+    .navbar-nav a:hover,
+    .mainmenu__menu .navbar-nav a:hover {
+        color: #fbbf24 !important;
+        text-shadow: 0 3px 12px rgba(251, 191, 36, 0.8) !important;
+        transform: translateY(-3px) !important;
+        background: rgba(255, 255, 255, 0.15) !important;
+        border-radius: 10px !important;
+    }
+
+    .navbar-nav .nav-link:hover::after,
+    .navbar-nav a:hover::after {
+        transform: scaleX(1) !important;
+    }
+
+    /* الأزرار - تدرج ذهبي لامع */
+    .menu-area .btn-primary,
+    .author-area .btn-primary {
+        background: linear-gradient(135deg, #f59e0b 0%, #ea580c 50%, #dc2626 100%) !important;
+        color: #ffffff !important;
+        font-weight: 800 !important;
+        box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5), inset 0 1px 0 rgba(255,255,255,0.3) !important;
+        border: none !important;
+        padding: 12px 28px !important;
+        border-radius: 12px !important;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .menu-area .btn-primary:hover {
+        background: linear-gradient(135deg, #ea580c 0%, #dc2626 50%, #b91c1c 100%) !important;
+        color: #ffffff !important;
+        transform: translateY(-4px) scale(1.08) !important;
+        box-shadow: 0 10px 30px rgba(245, 158, 11, 0.7), inset 0 1px 0 rgba(255,255,255,0.4) !important;
+    }
+
+    /* Sticky Navbar */
+    .menu-area-sticky,
+    .menu-area.fixed-top,
+    .headroom {
+        background: linear-gradient(135deg, #1e40af 0%, #7c3aed 50%, #db2777 100%) !important;
+        box-shadow: 0 10px 40px rgba(124, 58, 237, 0.6) !important;
+    }
+
+    /* تأثير إضافي للـ hover على كل الـ navbar */
+    .menu-area:hover {
+        box-shadow: 0 8px 35px rgba(124, 58, 237, 0.6) !important;
+    }
+    </style>
+    <?php
+}
+
 // ----------- تحذير تحديد الموقع الجغرافي -----------
 add_action('wp_footer', 'aegad_geo_warning', 999);
 function aegad_geo_warning() {
@@ -83,7 +214,7 @@ function aegad_geo_warning() {
                     showWarn(false); 
                 },
                 {
-                    timeout: 7000,  // Browser timeout: 7 seconds
+                    timeout: 10000,  // Browser timeout: 10 seconds (longer than user timeout)
                     enableHighAccuracy: false,
                     maximumAge: 0
                 }
